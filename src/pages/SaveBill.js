@@ -41,6 +41,7 @@ export default function SaveBill() {
         let sum = 0
         item.map(bill => {
             sum = sum + parseInt(bill.qty)
+            return bill
         })
         return sum
     }

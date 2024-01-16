@@ -11,7 +11,6 @@ export default function AllPayBill() {
     const [products, setProducts] = useState([])
     const [billSave, setBillSave] = useState([])
     const [billdetail, setbilldetail] = useState({})
-    const [billdetails, setbilldetails] = useState([])
     const [sum, setsum] = useState(0.00)
     const [recieve, setrecieve] = useState(0)
 
@@ -44,6 +43,7 @@ export default function AllPayBill() {
         let sum = 0
         item.map(bill => {
             sum = sum + parseInt(bill.qty)
+            return bill
         })
         return sum
     }
@@ -67,6 +67,7 @@ export default function AllPayBill() {
                     let sum = 0
                     res.data.results[0].billsaledetails.map(item => {
                         sum = sum + (parseInt(item.qty) * parseInt(item.price));
+                        return item
                     });
                     setsum(sum)
                 }
@@ -93,6 +94,7 @@ export default function AllPayBill() {
                     let sum = 0
                     res.data.results[0].billsaledetails.map(item => {
                         sum = sum + (parseInt(item.qty) * parseInt(item.price));
+                        return item
                     });
                     setsum(sum)
                 }

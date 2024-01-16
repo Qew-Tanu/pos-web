@@ -38,8 +38,9 @@ export default function Login() {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line
         fetchData()
-
+        // eslint-disable-next-line
     }, [])
 
 
