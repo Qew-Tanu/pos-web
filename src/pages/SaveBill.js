@@ -15,7 +15,6 @@ export default function SaveBill() {
     const [sum, setsum] = useState(0.00)
     const [recieve, setrecieve] = useState(0)
 
-
     const fetchBills = async () => {
         try {
             await axios.get(config.api_path + '/billsale/savebill', config.headers()).then(res => {

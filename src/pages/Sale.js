@@ -20,6 +20,7 @@ export default function Sale() {
         fetchDataSale()
     }, [])
 
+
     const handleOrder = (item) => {
         const i = billdetails.findIndex((e) => e.id === item.id)
         if (i > -1) {
@@ -56,6 +57,7 @@ export default function Sale() {
             })
         }
     }
+
 
     const fetchProductData = async () => {
         try {
@@ -254,7 +256,6 @@ export default function Sale() {
         })
 
     }
-
 
 
     useEffect(() => {

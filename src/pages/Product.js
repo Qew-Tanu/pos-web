@@ -4,6 +4,9 @@ import Swal from 'sweetalert2'
 import config from '../config'
 import axios from 'axios'
 import Modal from '../components/Modal'
+import { storage } from '../utility/firebase'
+import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage'
+
 
 
 const emptyproduct = {
@@ -16,9 +19,10 @@ const emptyproduct = {
 export default function Product() {
     const [product, setProduct] = useState(emptyproduct)
     const [products, setProducts] = useState([])
-    const [productImage, setProductImage] = useState({})
+    const [productImage, setProductImage] = useState(null)
     const [uploadValue, setUploadValue] = useState("")
     const [productImages, setProductImages] = useState([])
+    const [productImageList, setProductImageList] = useState([])
 
     const handlechange = (event) => {
         setProduct(prev => ({ ...prev, [event.target.name]: event.target.value }))
@@ -39,11 +43,20 @@ export default function Product() {
     }
 
     useEffect(() => {
+    }, [productImage])
+
+    // const testimageListRef = ref(storage, `image/13/2024-1-15-16-55-50-494-87981.jpg`)
+    useEffect(() => {
         fetchProductData()
+        // getDownloadURL(testimageListRef).then((url) => {
+        // })
+
+
     }, [])
 
     useEffect(() => {
     }, [product])
+
 
 
 
@@ -116,9 +129,20 @@ export default function Product() {
         }
     }
 
+
+
     const handleChangeFile = (e) => {
         setProductImage(e.target.files[0])
         setUploadValue(e.target.value)
+    }
+
+    const uploadImage = (imagename) => {
+        if (productImage === null) return;
+        const productImageName = imagename
+        const imageRef = ref(storage, `/image/${product.id}/${productImageName}`)
+        uploadBytes(imageRef, productImage).then(() => {
+            // alert("Image already upload")
+        })
     }
 
     const handleUploadFile = async () => {
@@ -130,11 +154,27 @@ export default function Product() {
                 }
             }
             const formData = new FormData();
+            const myDate = new Date();
+            const nameArray = [
+                myDate.getFullYear(),
+                myDate.getMonth() + 1,
+                myDate.getDate(),
+                myDate.getHours(),
+                myDate.getMinutes(),
+                myDate.getSeconds(),
+                myDate.getMilliseconds(),
+                parseInt(Math.random() * 100000)
+            ]
+            const re = /(?:\.([^.]+))?$/;
+            const ext = re.exec(productImage.name)[1];
+            const productImageName = nameArray.join("-") + "." + ext
+
             formData.append("productImage", productImage)
-            formData.append("productImageName", productImage.name)
+            formData.append("productImageName", productImageName)
             formData.append("productId", product.id)
             await axios.post(config.api_path + `/productImage/insert`, formData, newConfig).then(res => {
                 if (res.data.message === 'success') {
+                    uploadImage(productImageName)
                     Swal.fire({
                         title: "Save Product image",
                         text: "Product image have been upload",
@@ -161,10 +201,50 @@ export default function Product() {
     }
 
     const fetchProductImages = async (item) => {
+        setProductImages([])
         try {
-            await axios.get(config.api_path + `/productImage/list/${item.id}`, config.headers()).then(res => {
+            await axios.get(config.api_path + `/productImage/list/${item.id}`, config.headers()).then(async (res) => {
                 if (res.data.message === "success") {
-                    setProductImages(res.data.results)
+                    const datafetch = res.data.results
+                    const testttt = []
+                    datafetch.map(async (itemlist) => {
+                        const testimageListRef = ref(storage, `image/${item.id}/${itemlist.imageName}`)
+                        await getDownloadURL(testimageListRef).then(urltest => {
+                            testttt.push({ ...itemlist, url: urltest })
+                            setProductImages(prev => [...prev, { ...itemlist, url: urltest }])
+                        })
+                    })
+                    // return setProductImages(testttt)
+
+                    // const imageListRef = ref(storage, `image/${item.id}/`)
+                    // await listAll(imageListRef).then(res => {
+                    //     const imagelistAll = res
+                    //     let datacheck = []
+                    //     datafetch.map(async (item) => {
+                    //         const findUrl = imagelistAll.items.find((image) => image.name === item.imageName)
+                    //         let finalUrl = ""
+                    //         await getDownloadURL(findUrl).then(url => {
+                    //             finalUrl = url
+                    //             datacheck.push({ ...item, url: finalUrl })
+                    //             setProductImages(datacheck)
+                    //         })
+                    //     })
+                    // })
+                    // const datacheck = datafetch.map(async (item) => {
+                    //     const findUrl = imagelistAll.items.find((image) => image.name === item.imageName)
+                    //     let finalUrl = ""
+                    //     await getDownloadURL(findUrl).then(url => {
+                    //         finalUrl = url
+                    //     })
+                    //     return { ...item, url: finalUrl }
+                    // })
+                    // listAll(imageListRef).then(res => {
+                    //     res.items.forEach((item) => {
+                    //         getDownloadURL(item).then((url) => {
+                    //         })
+                    //     })
+                    // })
+                    // setProductImages(datacheck)
                 }
             }).catch(error => {
                 throw error.response.data
@@ -363,11 +443,17 @@ export default function Product() {
 
                     </div>
                     <div className="mt-3">
-                        {productImage.name !== undefined ?
-                            <button onClick={handleUploadFile} className='btn btn-primary'>
+                        {productImage !== null ? (productImage.name !== undefined ?
+                            <button
+                                onClick={() => {
+                                    handleUploadFile()
+                                    // uploadImage()
+                                }
+
+                                } className='btn btn-primary'>
                                 <i className='fa fa-check'></i> Upload image
                             </button>
-                            : ""}
+                            : "") : ""}
 
                     </div>
                     <div className="mt-3 h5">Product image</div>
@@ -378,7 +464,7 @@ export default function Product() {
                                     <div className="card text-center " style={{ 'maxHeight': '400px' }}>
                                         <div className='d-flex flex-column' style={{ 'height': '400px' }}>
                                             <div style={{ height: '100%', overflow: 'hidden' }}>
-                                                <img className='img-thumbnail' src={config.api_path + '/uploads/' + item.imageName} alt="" />
+                                                <img className='img-thumbnail' src={item.url} alt="" />
                                             </div>
                                             <div className="card-body d-flex flex-column justify-content-end">
                                                 <div className='d-flex justify-content-evenly'>
@@ -410,7 +496,6 @@ export default function Product() {
     )
 }
 
-//overflow: 'hidden'
 
 
 

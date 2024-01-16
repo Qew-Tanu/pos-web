@@ -10,7 +10,6 @@ import {
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Product from './pages/Product';
-import User from './pages/User';
 import Sale from './pages/Sale';
 import SaveBill from './pages/SaveBill';
 import AllPayBill from './pages/AllPayBill';
@@ -31,10 +30,6 @@ const router = createBrowserRouter([
   {
     path: "/product",
     element: <Product />
-  },
-  {
-    path: "/user",
-    element: <User />
   },
   {
     path: "/sale",

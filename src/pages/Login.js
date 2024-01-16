@@ -15,10 +15,12 @@ export default function Login() {
     const fetchData = async () => {
         try {
             await axios.get(config.api_path + '/member/info', config.headers()).then(res => {
+                console.log(res);
                 if (res.data.message === 'success') {
+
                     Swal.fire({
                         title: `Sign In`,
-                        text: `You login as ${res.data.name}.`,
+                        text: `You login as ${res.data.result.name}.`,
                         icon: 'success',
                         timer: 2000,
                         showConfirmButton: true

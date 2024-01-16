@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import config from '../config'
+import { getDownloadURL, ref } from 'firebase/storage';
+import { storage } from '../utility/firebase';
 
 
 
 export default function ProductList({ item, handle }) {
-
+    const [url, seturl] = useState("")
+    // console.log(item);
+    const testimageListRef = ref(storage, `image/${item.id}/${item.productImages[0].imageName}`)
+    getDownloadURL(testimageListRef).then(urltest => {
+        seturl(urltest)
+    })
     return (
         <div className='col-3 mb-3'>
 
@@ -18,7 +25,7 @@ export default function ProductList({ item, handle }) {
                     // style={{ height: 'auto' }}
                     >
                         <div className="" >
-                            <img src={config.api_path + '/uploads/' + item.productImages[0].imageName} className="card-img-top object-fit-contain" style={{ height: '20vw' }} alt="..." />
+                            <img src={url} className="card-img-top object-fit-contain" style={{ height: '20vw' }} alt="..." />
 
                         </div>
 

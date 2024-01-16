@@ -54,14 +54,6 @@ export default function Sidebar() {
                     <nav className="mt-2">
                         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <li className="nav-item">
-                                <Link to="/product" className="nav-link">
-                                    <i className="nav-icon fas fa-th"></i>
-                                    <p>
-                                        Dashboard
-                                    </p>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link to="/sale" className="nav-link">
                                     <i className="nav-icon fas fa-barcode"></i>
                                     <p>
@@ -90,14 +82,6 @@ export default function Sidebar() {
                                     <i className="nav-icon fas fa-box"></i>
                                     <p>
                                         Products
-                                    </p>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/user" className="nav-link">
-                                    <i className="nav-icon fas fa-user"></i>
-                                    <p>
-                                        User
                                     </p>
                                 </Link>
                             </li>

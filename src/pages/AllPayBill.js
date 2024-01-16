@@ -15,7 +15,6 @@ export default function AllPayBill() {
     const [sum, setsum] = useState(0.00)
     const [recieve, setrecieve] = useState(0)
 
-
     const fetchBills = async () => {
         try {
             await axios.get(config.api_path + '/billsale/allpaybill', config.headers()).then(res => {
@@ -39,7 +38,6 @@ export default function AllPayBill() {
     }, [])
 
     useEffect(() => {
-        console.log(billdetail);
     }, [billdetail])
 
     const sumItemOrder = (item) => {
@@ -59,22 +57,17 @@ export default function AllPayBill() {
 
 
     const handleEditBill = async (item) => {
-        // console.log(item);
         try {
             await axios.post(config.api_path + '/billsale/editbill', item, config.headers()).then(res => {
                 if (res.data.results === null) {
                     setbilldetail({})
                     setsum(0)
-                    console.log("Test");
                 } else {
                     setbilldetail(res.data.results[0]);
-                    console.log(res.data.results[0]);
                     let sum = 0
-                    console.log("Test2");
                     res.data.results[0].billsaledetails.map(item => {
                         sum = sum + (parseInt(item.qty) * parseInt(item.price));
                     });
-                    console.log("Test3");
                     setsum(sum)
                 }
             }).catch(error => {
@@ -95,16 +88,12 @@ export default function AllPayBill() {
                 if (res.data.results === null) {
                     setbilldetail({})
                     setsum(0)
-                    console.log("Test");
                 } else {
                     setbilldetail(res.data.results[0]);
-                    console.log(res.data.results[0]);
                     let sum = 0
-                    console.log("Test2");
                     res.data.results[0].billsaledetails.map(item => {
                         sum = sum + (parseInt(item.qty) * parseInt(item.price));
                     });
-                    console.log("Test3");
                     setsum(sum)
                 }
 
@@ -121,8 +110,6 @@ export default function AllPayBill() {
     }
 
     const handlePlusMinusQty = async (item, type) => {
-        // console.log(item);
-        // console.log(type);
         try {
             const datainsert = {
                 id: item.id
@@ -133,7 +120,6 @@ export default function AllPayBill() {
                 datainsert.qty = parseInt(item.qty) - 1
             }
 
-            // console.log(datainsert);
             if (datainsert.qty <= 0) {
                 await axios.delete(config.api_path + `/billsale//delete/${item.id}`, config.headers()).then((res) => {
                     if (res.data.message === 'success') {
@@ -145,7 +131,6 @@ export default function AllPayBill() {
             } else {
                 await axios.post(config.api_path + `/billsale/plusminus`, datainsert, config.headers()).then((res) => {
                     if (res.data.message === 'success') {
-                        console.log("test");
                         fetchDetailData()
                     }
                 }).catch(error => {
@@ -163,7 +148,6 @@ export default function AllPayBill() {
     }
     const handleDeleteSaleItem = async (item) => {
         try {
-            // console.log(item);
             await axios.delete(config.api_path + `/billsale/delete/${item.id}`, config.headers()).then((res) => {
                 fetchDetailData()
             }).catch(error => {
@@ -208,7 +192,6 @@ export default function AllPayBill() {
     const fetchProductData = async () => {
         try {
             axios.get(config.api_path + '/product/listforsale', config.headers()).then((res) => {
-                // console.log(res.data);
                 if (res.data.message === 'success') {
                     setProducts(res.data.results)
                 }
@@ -239,10 +222,8 @@ export default function AllPayBill() {
                         ...billdetail,
                         pricetotal: sum
                     }
-                    console.log(datainsert);
 
                     await axios.post(config.api_path + '/billsale/finishorder', datainsert, config.headers()).then(res => {
-                        console.log(res);
                         if (res.data.message === 'success') {
                             Swal.fire({
                                 title: "Finish payment",
@@ -269,16 +250,13 @@ export default function AllPayBill() {
 
     const handleSale = async (item) => {
         try {
-            console.log(item);
             const datainsert = {
                 ...item,
                 billeditid: billdetail.id
             }
-            console.log(billdetail.id);
             await axios.post(config.api_path + '/billsale/editsaledetail', datainsert, config.headers()).then((res) => {
                 if (res.data.message === 'success') {
                     fetchDetailData()
-                    console.log("test");
                 }
             }).catch(error => {
                 throw error.response.data
