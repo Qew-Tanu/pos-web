@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import config from '../config'
 import { getDownloadURL, ref } from 'firebase/storage';
 import { storage } from '../utility/firebase';
 

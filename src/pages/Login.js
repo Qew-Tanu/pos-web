@@ -122,7 +122,3 @@ export default function Login() {
         </form>
     )
 }
-
-
-
-{/* <input name='name' value={member.name} onChange={e => handlechange(e)} required className='form-control mt-3' /> */ }
